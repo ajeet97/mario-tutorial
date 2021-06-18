@@ -29,7 +29,7 @@ function createTiles(level, backgrounds) {
 
 export async function loadLevel(name) {
 	const [levelSpec, backgroundSprites] = await Promise.all([
-		fetch(`/levels/${name}.json`).then(r => r.json()),
+		fetch(`./levels/${name}.json`).then(r => r.json()),
 		loadBackgroundSprites(),
 	])
 
