@@ -1,26 +1,56 @@
-import { Trait } from '../Entity.js'
+import { Sides } from '../Entity.js'
+import BaseTrait from './BaseTrait.js'
 
-export default class Jump extends Trait {
+export default class Jump extends BaseTrait {
 	constructor() {
 		super('jump')
 
+		this.ready = 0
+
 		this.duration = 0.3
 		this.engageTime = 0
-		this.velocity = 200
+
+		this.requestTime = 0
+		this.gracePeriod = 0.1
+
+		this.speedBoost = 0.25
+		this.velocity = 180
+	}
+
+	get falling() {
+		return this.ready < 0
 	}
 
 	start() {
-		this.engageTime = this.duration
+		this.requestTime = this.gracePeriod
+		// if (!this.falling) this.engageTime = this.duration
 	}
 
 	cancel() {
+		this.requestTime = 0
 		this.engageTime = 0
 	}
 
+	obstruct(entity, side) {
+		if (side === Sides.BOTTOM) this.ready = 1
+		else if (side === Sides.TOP) this.cancel()
+	}
+
 	update(entity, deltaTime) {
+		if (this.requestTime > 0) {
+			if (this.ready > 0) {
+				this.engageTime = this.duration
+				this.requestTime = 0
+			}
+
+			this.requestTime -= deltaTime
+		}
+
 		if (this.engageTime > 0) {
-			entity.vel.y = -this.velocity
+			entity.vel.y = -(this.velocity + Math.abs(entity.vel.x) * this.speedBoost)
 			this.engageTime -= deltaTime
 		}
+
+		this.ready -= 1
 	}
 }

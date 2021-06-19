@@ -6,6 +6,8 @@ export default class Timer {
 			accumulatedTime += (time - lastTime) / 1000
 			lastTime = time
 
+			if (accumulatedTime > 1) accumulatedTime = 1
+
 			// Draw all accumulated frames in case of slower frame rate
 			while(accumulatedTime > deltaTime) {
 				this.update(deltaTime)

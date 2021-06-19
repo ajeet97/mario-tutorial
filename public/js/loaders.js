@@ -1,7 +1,11 @@
-import { createBackgroundLayer, createCollisionLayer, createEntityLayer } from './layers.js'
-import { loadBackgroundSprites } from './sprites.js'
+import { createAnim } from './animation.js'
 
-import Level from './Level.js'
+import SpriteSheet from './SpriteSheet.js'
+
+export function loadJSON(url) {
+	return fetch(url).then(r => r.json())
+}
+
 
 export function loadImage(url) {
 	return new Promise((resolve) => {
@@ -13,33 +17,32 @@ export function loadImage(url) {
 	})
 }
 
-function createTiles(level, backgrounds) {
-	backgrounds.forEach((background) => {
-		background.ranges.forEach(([i1, i2, j1, j2]) => {
-			for (let i = i1; i < i2; i++) {
-				for (let j = j1; j < j2; j++) {
-					level.tiles.set(i, j, {
-						name: background.tile,
-					})
-				}
-			}
+export async function loadSpriteSheet(name) {
+	const spriteSpec = await loadJSON(`./sprites/${name}.json`)
+	const image = await loadImage(spriteSpec.imageURL)
+
+	const sprites = new SpriteSheet(image, spriteSpec.tileW, spriteSpec.tileH)
+
+	if (spriteSpec.tiles) {
+		spriteSpec.tiles.forEach((tileSpec) => {
+			sprites.defineTile(tileSpec.name, ...tileSpec.index)
 		})
-	})
-}
+	}
 
-export async function loadLevel(name) {
-	const [levelSpec, backgroundSprites] = await Promise.all([
-		fetch(`./levels/${name}.json`).then(r => r.json()),
-		loadBackgroundSprites(),
-	])
+	if (spriteSpec.frames) {
+		spriteSpec.frames.forEach((frameSpec) => {
+			sprites.define(frameSpec.name, ...frameSpec.rect)
+		})
+	}
 
-	const level = new Level()
+	if (spriteSpec.animations) {
+		spriteSpec.animations.forEach((animSpec) => {
+			sprites.defineAnim(
+				animSpec.name,
+				createAnim(animSpec.frames, animSpec.frameLen)
+			)
+		})
+	}
 
-	createTiles(level, levelSpec.backgrounds)
-
-	level.comp.layers.push(createBackgroundLayer(level, backgroundSprites))
-	level.comp.layers.push(createEntityLayer(level.entities))
-	level.comp.layers.push(createCollisionLayer(level))
-
-	return level
+	return sprites
 }

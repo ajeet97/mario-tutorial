@@ -23,6 +23,10 @@ export class Matrix {
 }
 
 export class Vec2 {
+	/**
+	 * @param {Number} x 
+	 * @param {Number} y 
+	 */
 	constructor(x, y) {
 		this.set(x, y)
 	}

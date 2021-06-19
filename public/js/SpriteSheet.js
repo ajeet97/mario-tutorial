@@ -1,34 +1,55 @@
 export default class SpriteSheet {
-	constructor(image, tileWidth, tileHeight) {
+	constructor(image, tileW, tileH) {
 		this.image = image
-		this.tileWidth = tileWidth
-		this.tileHeight = tileHeight
+		this.tileW = tileW
+		this.tileH = tileH
 
 		this.tiles = new Map()
+		this.animations = new Map()
 	}
 
 	define(name, x, y, width, height) {
-		const buffer = document.createElement('canvas')
-		buffer.width = width
-		buffer.height = height
-		buffer.getContext('2d').drawImage(this.image,
-			x, y, width, height,
-			0, 0, width, height
-		)
+		const createBuffer = (mirrored) => {
+			const buffer = document.createElement('canvas')
+			buffer.width = width
+			buffer.height = height
+			const ctx = buffer.getContext('2d')
+			if (mirrored) {
+				ctx.scale(-1, 1)
+				ctx.translate(-width, 0)
+			}
+			ctx.drawImage(this.image,
+				x, y, width, height,
+				0, 0, width, height
+			)
+			return buffer
+		}
 
-		this.tiles.set(name, buffer)
+		this.tiles.set(name, [
+			createBuffer(false),
+			createBuffer(true),
+		])
 	}
 
 	defineTile(name, i, j) {
-		this.define(name, i * this.tileWidth, j * this.tileHeight, this.tileWidth, this.tileHeight)
+		this.define(name, i * this.tileW, j * this.tileH, this.tileW, this.tileH)
 	}
 
-	draw(name, context, x, y) {
-		const buffer = this.tiles.get(name)
+	defineAnim(name, animation) {
+		this.animations.set(name, animation)
+	}
+
+	draw(name, context, x, y, mirrored = false) {
+		const buffer = this.tiles.get(name)[mirrored ? 1 : 0]
 		context.drawImage(buffer, x, y)
 	}
 
 	drawTile(name, context, i, j) {
-		this.draw(name, context, i * this.tileWidth, j * this.tileHeight)
+		this.draw(name, context, i * this.tileW, j * this.tileH)
+	}
+
+	drawAnim(name, context, i, j, distance) {
+		const anim = this.animations.get(name)
+		this.draw(anim(distance), context, i * this.tileW, j * this.tileH)
 	}
 }

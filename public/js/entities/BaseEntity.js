@@ -1,4 +1,4 @@
-import { Vec2 } from './math.js'
+import { Vec2 } from '../math.js'
 
 export const Sides = {
 	TOP: Symbol('top'),
@@ -26,10 +26,10 @@ export default class Entity {
 		this.traits = []
 	}
 
-	addTrait(trait) {
-		this.traits.push(trait)
-		this[trait.name] = trait
-	}
+	// addTrait(trait) {
+	// 	this.traits.push(trait)
+	// 	this[trait.name] = trait
+	// }
 
 	obstruct(side) {
 		this.traits.forEach((trait) => {
@@ -41,5 +41,9 @@ export default class Entity {
 		this.traits.forEach((trait) => {
 			trait.update(this, deltaTime)
 		})
+	}
+
+	draw() {
+		console.warn('Unhandled draw method for Entity:', this.constructor.name)
 	}
 }
