@@ -16,22 +16,22 @@ function isBreak(vel, dir) {
 function setupKeyboard(mario) {
 	const input = new Keyboard()
 
-	input.addMapping(['Space', 'ArrowUp'], (keyState) => {
+	input.addMapping('KeyK', (keyState) => {
 		if (keyState) mario.jump.start()
 		else mario.jump.cancel()
 	})
 
-	input.addMapping('ShiftLeft', (keyState) => {
+	input.addMapping('KeyJ', (keyState) => {
 		mario.turbo(keyState)
 	})
 
-	input.addMapping('ArrowRight', (keyState) => {
+	input.addMapping('KeyD', (keyState) => {
 		mario.go.dir += keyState ? 1 : -1
 		// if (keyState) entity.go.dir = keyState
 		// else if (entity.go.dir > 0) entity.go.dir = 0
 	})
 
-	input.addMapping('ArrowLeft', (keyState) => {
+	input.addMapping('KeyA', (keyState) => {
 		mario.go.dir += keyState ? -1 : 1
 		// if (keyState) entity.go.dir = -keyState
 		// else if (entity.go.dir < 0) entity.go.dir = 0
