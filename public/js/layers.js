@@ -1,8 +1,13 @@
+import TileResolver from './TileResolver.js'
+
 /**
  * @param {import('./Level').default} level 
+ * @param {import('./math').Matrix} tiles
  * @param {import('./SpriteSheet').default} spriteSheet 
  */
-export function createBackgroundLayer(level, spriteSheet) {
+export function createBackgroundLayer(level, tiles, spriteSheet) {
+	const tileResolver = new TileResolver(tiles)
+
 	const buffer = document.createElement('canvas')
 	buffer.width = 256 + 16
 	buffer.height = 240
@@ -11,11 +16,12 @@ export function createBackgroundLayer(level, spriteSheet) {
 
 	let i1, i2
 	function redraw(drawFrom, drawTo) {
+		bufferCtx.clearRect(0, 0, buffer.width, buffer.height)
 		// if (drawFrom === i1 && drawTo === i2) return
 		i1 = drawFrom
 		i2 = drawTo
 		for (let i = i1; i <= i2; i++) {
-			const col = level.tiles.grid[i]
+			const col = tiles.grid[i]
 			if (col) {
 				col.forEach((tile, j) => {
 					if (spriteSheet.animations.has(tile.name)) {
@@ -28,7 +34,6 @@ export function createBackgroundLayer(level, spriteSheet) {
 		}
 	}
 
-	const tileResolver = level.tileCollider.tiles
 	return function drawBackgroundLayer(context, camera) {
 		const drawWidth = tileResolver.toIndex(camera.size.x)
 		const drawFrom = tileResolver.toIndex(camera.pos.x)
