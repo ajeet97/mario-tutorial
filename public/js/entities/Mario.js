@@ -1,5 +1,10 @@
+import Solid from '../traits/Solid.js'
 import Go from '../traits/Go.js'
 import Jump from '../traits/Jump.js'
+import Stomper from '../traits/Stomper.js'
+import Killable from '../traits/Killable.js'
+import Physics from '../traits/Physics.js'
+
 import Keyboard from '../Keyboard.js'
 import SpriteSheet from '../SpriteSheet.js'
 
@@ -52,13 +57,12 @@ export default class Mario extends BaseEntity {
 	init() {
 		this.size.set(14, 16)
 
-		this.go = new Go()
-		this.jump = new Jump()
-
-		this.traits.push(
-			this.go,
-			this.jump,
-		)
+		this.addTrait(new Physics())
+		this.addTrait(new Solid())
+		this.addTrait(new Go())
+		this.addTrait(new Jump())
+		this.addTrait(new Stomper())
+		this.addTrait(new Killable(0))
 
 		this.turbo(false)
 		this.runAnim = Mario.spriteSheet.animations.get('run')

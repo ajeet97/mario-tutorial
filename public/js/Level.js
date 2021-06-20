@@ -6,6 +6,7 @@ import EntityFactory from './entities/EntityFactory.js'
 import Compositor from './Compositor.js'
 import SpriteSheet from './SpriteSheet.js'
 import TileCollider from './TileCollider.js'
+import EntityCollider from './EntityCollider.js'
 
 function* expandSpan(i1, iLen, j1, jLen) {
 	for (let i = i1; i < i1 + iLen; i++) {
@@ -64,7 +65,6 @@ function createBackgroundGrid(tiles, patterns) {
 
 export default class Level {
 	constructor() {
-		this.gravity = 1500
 		this.totalTime = 0
 
 		this.comp = new Compositor()
@@ -85,7 +85,9 @@ export default class Level {
 			.layers
 			.reduce((merged, layer) => merged.concat(layer.tiles), [])
 		const collisionGrid = createCollisionGrid(mergedTiles, levelSpec.patterns)
+
 		this.tileCollider = new TileCollider(collisionGrid)
+		this.entityCollider = new EntityCollider(this.entities)
 	}
 
 	_setupEntities(levelSpec) {
@@ -116,15 +118,15 @@ export default class Level {
 
 	update(deltaTime) {
 		this.entities.forEach((entity) => {
-			entity.update(deltaTime)
+			entity.update(deltaTime, this)
+		})
 
-			entity.pos.x += entity.vel.x * deltaTime
-			this.tileCollider.checkX(entity)
+		this.entities.forEach((entity) => {
+			this.entityCollider.check(entity)
+		})
 
-			entity.pos.y += entity.vel.y * deltaTime
-			this.tileCollider.checkY(entity)
-
-			entity.vel.y += this.gravity * deltaTime
+		this.entities.forEach((entity) => {
+			entity.finalize()
 		})
 
 		this.totalTime += deltaTime

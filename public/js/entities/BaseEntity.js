@@ -7,18 +7,6 @@ export const Sides = {
 	RIGHT: Symbol('right'),
 }
 
-export class Trait {
-	constructor(name) {
-		this.name = name
-	}
-
-	obstruct() { }
-
-	update() {
-		console.warn('Unhandled update call in Trait')
-	}
-}
-
 export default class BaseEntity {
 	constructor() {
 		this.vel = new Vec2(0, 0)
@@ -28,30 +16,42 @@ export default class BaseEntity {
 		this.offset = new Vec2(0, 0)
 
 		this.bounds = new BoundingBox(this.pos, this.size, this.offset)
-		
+
 		this.lifetime = 0
+
+		/** @type {Array<import('../traits/BaseTrait').default>} */
 		this.traits = []
 	}
 
-	// addTrait(trait) {
-	// 	this.traits.push(trait)
-	// 	this[trait.name] = trait
-	// }
+	addTrait(trait) {
+		this.traits.push(trait)
+		this[trait.name] = trait
+	}
 
-	obstruct(side) {
+	obstruct(side, match) {
 		this.traits.forEach((trait) => {
-			trait.obstruct(this, side)
+			trait.obstruct(this, side, match)
 		})
 	}
 
-	update(deltaTime) {
+	update(deltaTime, level) {
 		this.lifetime += deltaTime
 		this.traits.forEach((trait) => {
-			trait.update(this, deltaTime)
+			trait.update(this, deltaTime, level)
 		})
 	}
 
-	draw() {
-		console.warn('Unhandled draw method for Entity:', this.constructor.name)
+	collides(candidate) {
+		this.traits.forEach((trait) => {
+			trait.collides(this, candidate)
+		})
 	}
+
+	finalize() {
+		this.traits.forEach((trait) => {
+			trait.finalize()
+		})
+	}
+
+	draw(context, camera) { }
 }

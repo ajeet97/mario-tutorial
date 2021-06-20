@@ -1,10 +1,11 @@
 import { Sides } from '../entities/BaseEntity.js'
 import BaseTrait from './BaseTrait.js'
 
-export default class PendulumWalk extends BaseTrait {
+export default class PendulumMove extends BaseTrait {
 	constructor() {
-		super('pendulumWalk')
+		super('pendulumMove')
 
+		this.enabled = true
 		this.speed = -30
 	}
 
@@ -15,6 +16,8 @@ export default class PendulumWalk extends BaseTrait {
 	}
 
 	update(entity) {
-		entity.vel.x = this.speed
+		if (this.enabled) {
+			entity.vel.x = this.speed
+		}
 	}
 }

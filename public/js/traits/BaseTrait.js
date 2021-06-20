@@ -1,11 +1,21 @@
 export default class BaseTrait {
 	constructor(name) {
 		this.name = name
+		this.tasks = []
 	}
 
-	obstruct() { }
-
-	update() {
-		console.warn('Unhandled update call in Trait')
+	queue(task) {
+		this.tasks.push(task)
 	}
+
+	finalize() {
+		this.tasks.forEach(task => task())
+		this.tasks.length = 0
+	}
+
+	collides(us, them) { }
+
+	obstruct(entity, side) { }
+
+	update(entity, camera, level) { }
 }
