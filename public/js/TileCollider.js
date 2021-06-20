@@ -1,4 +1,4 @@
-import { Sides } from './Entity.js'
+import { Sides } from './entities/BaseEntity.js'
 import TileResolver from './TileResolver.js'
 
 export default class TileCollider {
@@ -6,52 +6,58 @@ export default class TileCollider {
 		this.tiles = new TileResolver(tileMatrix)
 	}
 
+	/** @param {import('./entities/BaseEntity').default} entity */
 	checkX(entity) {
 		if (!entity.vel.x) return
 
-		const x = entity.vel.x > 0 ? entity.pos.x + entity.size.x : entity.pos.x
+		const x = entity.vel.x > 0 ? entity.bounds.right : entity.bounds.left
 		const matches = this.tiles.searchByRange(
 			x, x,
-			entity.pos.y, entity.pos.y + entity.size.y,
+			entity.bounds.top, entity.bounds.bottom,
 		)
 		matches.forEach((match) => {
 			if (match.tile.type !== 'ground') return
 
 			if (entity.vel.x > 0) {
-				if (entity.pos.x + entity.size.x > match.x1) {
-					entity.pos.x = match.x1 - entity.size.x
+				if (entity.bounds.right > match.x1) {
+					entity.bounds.right = match.x1
 					entity.vel.x = 0
+
+					entity.obstruct(Sides.RIGHT)
 				}
 			} else if (entity.vel.x < 0) {
-				if (entity.pos.x < match.x2) {
-					entity.pos.x = match.x2
+				if (entity.bounds.left < match.x2) {
+					entity.bounds.left = match.x2
 					entity.vel.x = 0
+
+					entity.obstruct(Sides.LEFT)
 				}
 			}
 		})
 	}
 
+	/** @param {import('./entities/BaseEntity').BaseEntity} entity */
 	checkY(entity) {
 		if (!entity.vel.y) return
 
-		const y = entity.vel.y > 0 ? entity.pos.y + entity.size.y : entity.pos.y
+		const y = entity.vel.y > 0 ? entity.bounds.bottom : entity.bounds.top
 		const matches = this.tiles.searchByRange(
-			entity.pos.x, entity.pos.x + entity.size.x,
+			entity.bounds.left, entity.bounds.right,
 			y, y,
 		)
 		matches.forEach((match) => {
 			if (match.tile.type !== 'ground') return
 
 			if (entity.vel.y > 0) {
-				if (entity.pos.y + entity.size.y > match.y1) {
-					entity.pos.y = match.y1 - entity.size.y
+				if (entity.bounds.bottom > match.y1) {
+					entity.bounds.bottom = match.y1
 					entity.vel.y = 0
 
 					entity.obstruct(Sides.BOTTOM)
 				}
 			} else if (entity.vel.y < 0) {
-				if (entity.pos.y < match.y2) {
-					entity.pos.y = match.y2
+				if (entity.bounds.top < match.y2) {
+					entity.bounds.top = match.y2
 					entity.vel.y = 0
 
 					entity.obstruct(Sides.TOP)

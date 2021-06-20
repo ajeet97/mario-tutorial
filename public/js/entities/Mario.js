@@ -1,8 +1,8 @@
-import { createAnim } from '../animation.js'
-import { loadSpriteSheet } from '../loaders.js'
-import Keyboard from '../Keyboard.js'
 import Go from '../traits/Go.js'
 import Jump from '../traits/Jump.js'
+import Keyboard from '../Keyboard.js'
+import SpriteSheet from '../SpriteSheet.js'
+
 import BaseEntity from './BaseEntity.js'
 
 const FAST_DRAG = 1 / 5000
@@ -41,16 +41,16 @@ function setupKeyboard(mario) {
 }
 
 export default class Mario extends BaseEntity {
-	/** @param {import('../SpriteSheet').default} spriteSheet */
-	constructor(spriteSheet) {
-		super()
+	/** @type {import('../SpriteSheet').default} */
+	static spriteSheet = null
 
-		this.spriteSheet = spriteSheet
+	constructor() {
+		super()
 		this.init()
 	}
 
 	init() {
-		this.size.set(16, 16)
+		this.size.set(14, 16)
 
 		this.go = new Go()
 		this.jump = new Jump()
@@ -60,15 +60,14 @@ export default class Mario extends BaseEntity {
 			this.jump,
 		)
 
-		this.go.dragFactor = SLOW_DRAG
-		this.runAnim = createAnim(['run-1', 'run-2', 'run-3'], 7)
+		this.turbo(false)
+		this.runAnim = Mario.spriteSheet.animations.get('run')
 
 		setupKeyboard(this)
 	}
 
-	static async create() {
-		const spriteSheet = await loadSpriteSheet('mario')
-		return new Mario(spriteSheet)
+	static async load() {
+		this.spriteSheet = await SpriteSheet.load('mario')
 	}
 
 	turbo(turboOn) {
@@ -85,7 +84,7 @@ export default class Mario extends BaseEntity {
 	}
 
 	draw(context, camera) {
-		this.spriteSheet.draw(this._resolveFrame(), context,
+		Mario.spriteSheet.draw(this._resolveFrame(), context,
 			this.pos.x - camera.pos.x,
 			this.pos.y - camera.pos.y,
 			this.go.heading < 0,

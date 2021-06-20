@@ -1,3 +1,5 @@
+import { loadJSON, loadImage } from './loaders.js'
+import { createAnim } from './animation.js'
 export default class SpriteSheet {
 	constructor(image, tileW, tileH) {
 		this.image = image
@@ -6,6 +8,36 @@ export default class SpriteSheet {
 
 		this.tiles = new Map()
 		this.animations = new Map()
+	}
+
+	static async load(name) {
+		const spriteSpec = await loadJSON(`./sprites/${name}.json`)
+		const image = await loadImage(spriteSpec.imageURL)
+
+		const sprites = new SpriteSheet(image, spriteSpec.tileW, spriteSpec.tileH)
+
+		if (spriteSpec.tiles) {
+			spriteSpec.tiles.forEach((tileSpec) => {
+				sprites.defineTile(tileSpec.name, ...tileSpec.index)
+			})
+		}
+
+		if (spriteSpec.frames) {
+			spriteSpec.frames.forEach((frameSpec) => {
+				sprites.define(frameSpec.name, ...frameSpec.rect)
+			})
+		}
+
+		if (spriteSpec.animations) {
+			spriteSpec.animations.forEach((animSpec) => {
+				sprites.defineAnim(
+					animSpec.name,
+					createAnim(animSpec.frames, animSpec.frameLen)
+				)
+			})
+		}
+
+		return sprites
 	}
 
 	define(name, x, y, width, height) {

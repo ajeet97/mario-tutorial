@@ -1,7 +1,8 @@
-import { createCameraLayer } from './layers.js'
+import { createCameraLayer, createCollisionLayer } from './layers.js'
 // import { setupMouseControl } from './debug.js'
 
-import Mario from './entities/Mario.js'
+import EntityFactory from './entities/EntityFactory.js'
+
 import Level from './Level.js'
 import Timer from './Timer.js'
 import Camera from './Camera.js'
@@ -13,16 +14,16 @@ canvas.width = 640
 canvas.height = 640
 
 async function main() {
-	const [mario, level] = await Promise.all([
-		Mario.create(),
-		Level.create('1-1'),
-	])
+	await EntityFactory.load()
+
+	const level = await Level.load('1-1')
+	const mario = EntityFactory.mario()
 	const camera = new Camera()
-	window.camera = camera
 
 	/** Things for debugging purpose only */
 	// setupMouseControl(canvas, mario, camera)
 	level.comp.layers.push(createCameraLayer(camera))
+	level.comp.layers.push(createCollisionLayer(level))
 
 	level.entities.add(mario)
 	mario.pos.set(64, 0)

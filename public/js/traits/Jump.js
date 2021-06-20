@@ -1,4 +1,4 @@
-import { Sides } from '../Entity.js'
+import { Sides } from '../entities/BaseEntity.js'
 import BaseTrait from './BaseTrait.js'
 
 export default class Jump extends BaseTrait {
