@@ -7,7 +7,7 @@ export default class Jump extends BaseTrait {
 
 		this.ready = 0
 
-		this.duration = 0.3
+		this.duration = 0.32
 		this.engageTime = 0
 
 		this.requestTime = 0
