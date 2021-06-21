@@ -16,8 +16,7 @@ export default class PendulumMove extends BaseTrait {
 	}
 
 	update(entity) {
-		if (this.enabled) {
-			entity.vel.x = this.speed
-		}
+		if (this.enabled) entity.vel.x = this.speed
+		else entity.vel.x = 0
 	}
 }

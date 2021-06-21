@@ -1,4 +1,5 @@
-// import { createCameraLayer, createCollisionLayer } from './layers.js'
+// import createCameraLayer from './layers/camera.js'
+// import createCollisionLayer from './layers/collision.js'
 // import { setupMouseControl } from './debug.js'
 
 import EntityFactory from './entities/EntityFactory.js'
@@ -37,8 +38,8 @@ async function main() {
 	// level.comp.layers.push(createCameraLayer(camera))
 	// level.comp.layers.push(createCollisionLayer(level))
 
-	const fps = 60
-	const timer = new Timer(1 / fps)
+	const frameLength = 1 / 60 // Frame length in time
+	const timer = new Timer(frameLength)
 	timer.update = function update(deltaTime) {
 		level.update(deltaTime)
 		camera.pos.x = Math.max(0, mario.pos.x - 100)

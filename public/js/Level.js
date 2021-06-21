@@ -1,6 +1,7 @@
 import { Matrix } from './math.js'
 import { loadJSON } from './loaders.js'
-import { createBackgroundLayer, createEntityLayer } from './layers.js'
+import createBackgroundLayer from './layers/background.js'
+import createEntityLayer from './layers/entity.js'
 
 import EntityFactory from './entities/EntityFactory.js'
 import Compositor from './Compositor.js'
