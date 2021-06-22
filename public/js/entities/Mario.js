@@ -5,6 +5,7 @@ import Stomper from '../traits/Stomper.js'
 import Killable from '../traits/Killable.js'
 import Physics from '../traits/Physics.js'
 
+import AudioBoard from '../AudioBoard.js'
 import Keyboard from '../Keyboard.js'
 import SpriteSheet from '../SpriteSheet.js'
 
@@ -48,6 +49,8 @@ function setupKeyboard(mario) {
 export default class Mario extends BaseEntity {
 	/** @type {import('../SpriteSheet').default} */
 	static spriteSheet = null
+	/** @type {import('../AudioBoard').default} */
+	static audio = null
 
 	constructor() {
 		super()
@@ -71,7 +74,10 @@ export default class Mario extends BaseEntity {
 	}
 
 	static async load() {
-		this.spriteSheet = await SpriteSheet.load('mario')
+		[this.spriteSheet, this.audio] = await Promise.all([
+			SpriteSheet.load('mario'),
+			AudioBoard.load('mario'),
+		])
 	}
 
 	turbo(turboOn) {

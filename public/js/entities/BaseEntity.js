@@ -38,6 +38,7 @@ export default class BaseEntity {
 		this.lifetime += deltaTime
 		this.traits.forEach((trait) => {
 			trait.update(this, deltaTime, level)
+			trait.playAudio(this.constructor.audio)
 		})
 	}
 

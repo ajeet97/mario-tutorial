@@ -17,6 +17,7 @@ export default class Stomper extends BaseTrait {
 		if (them.killable.dead) return
 
 		if (us.vel.y > them.vel.y) {
+			this.sounds.add('stomp')
 			this.bounce(us, them)
 		}
 	}

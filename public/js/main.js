@@ -12,12 +12,7 @@ import Level from './Level.js'
 import Timer from './Timer.js'
 import Camera from './Camera.js'
 import Text from './Text.js'
-
-const canvas = document.getElementById('screen')
-const context = canvas.getContext('2d')
-
-canvas.width = 256
-canvas.height = 240
+import AudioBoard from './AudioBoard.js'
 
 function createPlayerEnv(player) {
 	const env = new BaseEntity()
@@ -27,6 +22,15 @@ function createPlayerEnv(player) {
 }
 
 async function main() {
+	const canvas = document.getElementById('screen')
+	const context = canvas.getContext('2d')
+
+	canvas.width = 256
+	canvas.height = 240
+
+	const audioContext = new AudioContext()
+	AudioBoard.setAudioContext(audioContext)
+
 	await Promise.all([
 		EntityFactory.load(),
 		Text.load(),
@@ -38,8 +42,6 @@ async function main() {
 	const camera = new Camera()
 
 	level.entities.add(playerEnv)
-	// level.entities.add(mario)
-	
 	level.comp.layers.push(createDashboardLayer(playerEnv))
 
 	/** Things for debugging purpose only */

@@ -11,3 +11,9 @@ export function loadImage(url) {
 		image.src = url
 	})
 }
+
+export async function loadAudio(url, audioContext) {
+	const arrayBuffer = await fetch(url).then(res => res.arrayBuffer())
+	const audioBuffer = audioContext.decodeAudioData(arrayBuffer)
+	return audioBuffer
+}
